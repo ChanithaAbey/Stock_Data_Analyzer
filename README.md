@@ -104,12 +104,6 @@ Stock data saved to NKE_data.csv.
 
 ---
 
-## License
-
-This project is licensed under the **MIT License**.
-
----
-
 ## Disclaimer
 
 This tool uses data provided by **Yahoo Finance** through the `yfinance` library. Data accuracy and availability depend on Yahoo Finance.
