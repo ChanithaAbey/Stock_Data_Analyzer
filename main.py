@@ -1,8 +1,9 @@
-# Import libraries; Yahoo Finance for stock data, Pandas for data manipulation, Datetime for tracking date, Matplotlib for plotting, and logging for logging messages, 
+# Import libraries; Yahoo Finance for stock data, Pandas for data manipulation, Datetime for tracking date, Matplotlib for plotting, and logging for logging messages
 import yfinance
 import pandas as pd
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import logging
 
 # Suppress yfinance debug logs
@@ -13,7 +14,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Fetches stock data from Yahoo Finance and returns it as a Pandas DataFrame
 def fetch(ticker_symbol, start_date=None, end_date=None, interval="1d"):
-
     try:
         if not end_date:
             end_date = datetime.now().strftime('%Y-%m-%d')
@@ -27,7 +27,7 @@ def fetch(ticker_symbol, start_date=None, end_date=None, interval="1d"):
         if data_frame.empty:
             return None
 
-        data_frame['Date'] = pd.to_datetime(data_frame['Date']).dt.date
+        data_frame['Date'] = pd.to_datetime(data_frame['Date']).dt.strftime('%d-%m-%Y')
         data_frame = data_frame.round(2)
 
         data_frame['SMA_50'] = data_frame['Close'].rolling(window=50).mean()
@@ -64,15 +64,25 @@ while True:
         data.to_csv(name, index=False)
         print(f"\nStock data saved to {name}.")
 
+        # Convert 'Date' back to datetime for plotting
+        plot_data = data.copy()
+        plot_data['Date'] = pd.to_datetime(plot_data['Date'], format='%d-%m-%Y')
+
         plt.figure(figsize=(10, 5))
-        plt.plot(data['Date'], data['Close'], label='Close Price', linewidth=1.5)
-        plt.plot(data['Date'], data['SMA_50'], label='SMA 50', linestyle='--')
-        plt.plot(data['Date'], data['SMA_200'], label='SMA 200', linestyle=':')
+        plt.plot(plot_data['Date'], plot_data['Close'], label='Close Price', linewidth=1.5)
+        plt.plot(plot_data['Date'], plot_data['SMA_50'], label='SMA 50', linestyle='--')
+        plt.plot(plot_data['Date'], plot_data['SMA_200'], label='SMA 200', linestyle=':')
+
         plt.title(f"{ticker} Stock Price with SMA")
         plt.xlabel("Date")
         plt.ylabel("Price in USD")
         plt.legend()
         plt.grid(True)
+
+        # Format x-axis with custom date format
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+        plt.gcf().autofmt_xdate()
+
         plt.tight_layout()
         plt.show()
         plt.close()
