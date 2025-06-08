@@ -32,7 +32,7 @@ This script is a Python-based tool that fetches stock data from Yahoo Finance, a
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/Stock-Data-Analyzer.git
+   git clone https://github.com/ChanithaAbey/Stock_Data_Analyzer
    cd Stock-Data-Analyzer
    ```
 
